@@ -1,0 +1,486 @@
+{
+  "about": "Parameters the generator reads: funnel shares, lead-time and order-value quantiles, customer concentration, field fill rates, status and vertical wording, payment terms, free-text delivery promises, item quantities and the vessel-size lead factor. All values describe a synthetic order book.",
+  "funnel": {
+    "Pressure Vessel": {
+      "rows": 692,
+      "has_quote_no": 216,
+      "won": 613,
+      "won_and_quoted": 141,
+      "won_without_quote_no": 472,
+      "quoted_not_won": 75,
+      "neither": 4
+    },
+    "Pultrusion": {
+      "rows": 600,
+      "has_quote_no": 370,
+      "won": 282,
+      "won_and_quoted": 175,
+      "won_without_quote_no": 107,
+      "quoted_not_won": 195,
+      "neither": 123
+    },
+    "Grating": {
+      "rows": 318,
+      "has_quote_no": 200,
+      "won": 191,
+      "won_and_quoted": 84,
+      "won_without_quote_no": 107,
+      "quoted_not_won": 116,
+      "neither": 11
+    },
+    "derived_no_quote_share_of_won_pct": {
+      "Pressure Vessel": 77.0,
+      "Pultrusion": 37.9,
+      "Grating": 56.0
+    },
+    "derived_conversion_of_quoted_pct": {
+      "Pressure Vessel": 65.3,
+      "Pultrusion": 47.3,
+      "Grating": 42.0
+    }
+  },
+  "lead_times_days": {
+    "quote_to_po": {
+      "Pressure Vessel": [
+        1,
+        1,
+        3,
+        5,
+        13
+      ],
+      "Pultrusion": [
+        5,
+        13,
+        20,
+        31,
+        65
+      ],
+      "Grating": [
+        0,
+        7,
+        14,
+        26,
+        41
+      ]
+    },
+    "quote_to_po_n": {
+      "Pressure Vessel": 90,
+      "Pultrusion": 93,
+      "Grating": 63
+    },
+    "po_to_dp": {
+      "Pressure Vessel": [
+        4,
+        12,
+        28,
+        82,
+        128
+      ],
+      "Pultrusion": [
+        9,
+        14,
+        20,
+        26,
+        41
+      ],
+      "Grating": [
+        9,
+        16,
+        24,
+        32,
+        39
+      ]
+    },
+    "po_to_dp_n": {
+      "Pressure Vessel": 135,
+      "Pultrusion": 42,
+      "Grating": 32
+    },
+    "negative_leads": {
+      "quote_to_po_negative": {
+        "Pressure Vessel": 0,
+        "Pultrusion": 0,
+        "Grating": 2
+      },
+      "po_to_dp_negative": {
+        "Pressure Vessel": 2,
+        "Pultrusion": 0,
+        "Grating": 1
+      }
+    },
+    "quote_to_po_full": {
+      "Pressure Vessel": {
+        "p10": 1,
+        "p25": 1,
+        "p50": 3,
+        "p75": 5,
+        "p90": 13,
+        "p95": 16,
+        "p99": 90,
+        "max": 168
+      },
+      "Pultrusion": {
+        "p10": 5,
+        "p25": 13,
+        "p50": 20,
+        "p75": 31,
+        "p90": 65,
+        "p95": 97,
+        "p99": 1769,
+        "max": 20485
+      },
+      "Grating": {
+        "p10": 0,
+        "p25": 7,
+        "p50": 14,
+        "p75": 26,
+        "p90": 41,
+        "p95": 48,
+        "p99": 62,
+        "max": 66
+      }
+    },
+    "po_to_dp_full": {
+      "Pressure Vessel": {
+        "p10": 4,
+        "p25": 12,
+        "p50": 28,
+        "p75": 82,
+        "p90": 128,
+        "p95": 169,
+        "p99": 265,
+        "max": 499
+      },
+      "Pultrusion": {
+        "p10": 9,
+        "p25": 14,
+        "p50": 20,
+        "p75": 26,
+        "p90": 41,
+        "p95": 70,
+        "p99": 128,
+        "max": 159
+      },
+      "Grating": {
+        "p10": 9,
+        "p25": 16,
+        "p50": 24,
+        "p75": 32,
+        "p90": 39,
+        "p95": 71,
+        "p99": 118,
+        "max": 131
+      }
+    }
+  },
+  "order_value_inr": {
+    "Pressure Vessel": [
+      42244,
+      167136,
+      1099552,
+      3434727,
+      5809019
+    ],
+    "Pultrusion": [
+      233581,
+      359942,
+      864350,
+      2132558,
+      4555809
+    ],
+    "Grating": [
+      48248,
+      109740,
+      363065,
+      1014984,
+      3008183
+    ],
+    "max": {
+      "Pressure Vessel": 36771000,
+      "Pultrusion": 36810206,
+      "Grating": 219876456
+    },
+    "n": {
+      "Pressure Vessel": 316,
+      "Pultrusion": 367,
+      "Grating": 309
+    },
+    "full": {
+      "Pressure Vessel": {
+        "p10": 42244,
+        "p25": 167135,
+        "p50": 1099552,
+        "p75": 3434727,
+        "p90": 5809019,
+        "p95": 8133416,
+        "p99": 15836645,
+        "max": 36771000
+      },
+      "Pultrusion": {
+        "p10": 233580,
+        "p25": 359941,
+        "p50": 864350,
+        "p75": 2132558,
+        "p90": 4555808,
+        "p95": 5580790,
+        "p99": 13032527,
+        "max": 36810206
+      },
+      "Grating": {
+        "p10": 48247,
+        "p25": 109740,
+        "p50": 363064,
+        "p75": 1014983,
+        "p90": 3008183,
+        "p95": 5575470,
+        "p99": 12822088,
+        "max": 219876456
+      }
+    }
+  },
+  "customer_concentration": {
+    "Pressure Vessel": {
+      "customers": 19,
+      "top1_pct": 63.3,
+      "top5_pct": 94.1,
+      "top10_pct": 98.9
+    },
+    "Pultrusion": {
+      "customers": 9,
+      "top1_pct": 82.1,
+      "top5_pct": 99.2,
+      "top10_pct": 100.0
+    },
+    "Grating": {
+      "customers": 113,
+      "top1_pct": 39.4,
+      "top5_pct": 75.2,
+      "top10_pct": 82.4
+    },
+    "distinct_parties_all_lines": 275
+  },
+  "field_fill_rates_pct": {
+    "PO DATE": 68.6,
+    "DP DATE": 24.0,
+    "PO VALIDITY DATE": 1.8,
+    "QUOTE DATE": 64.5,
+    "INQUIRY DATE": 16.0,
+    "PO / QUOTE VALUE": 63.6,
+    "PAYMENT TERMS": 3.4,
+    "INCOTERMS": 45.5,
+    "ITEM QTY": 26.6,
+    "STATUS": 99.8,
+    "VERTICAL": 87.4,
+    "LD": 7.2
+  },
+  "status_vocabulary": {
+    "all_values_as_typed": {
+      "PO Received & Delivered": 1495,
+      "Open": 743,
+      "PO RECEIVED & DELIVERED": 269,
+      "Closed": 252,
+      "CLOSED": 190,
+      "Not Received": 92,
+      "PO RECEIVED": 83,
+      "NOT RECEIVED": 68,
+      "OPEN": 63,
+      "PO Received": 60,
+      "Work in Progress": 48,
+      "Budgetary": 32,
+      "LOST": 30,
+      "Order Confirmed": 22,
+      "BUDGETARY": 22,
+      "PENDING": 17,
+      "Po Received & Delivered": 16,
+      "PO received & Delivered": 16,
+      "On Hold": 14,
+      "UNDER DISCUSSION": 14,
+      "Lost": 12,
+      "LOA": 10,
+      "Cancel": 10,
+      "Work in progress": 10,
+      "PO Not Received": 10,
+      "RETENDER": 9,
+      "Pending": 6,
+      "RFQ Submitted": 5,
+      "HANDED OVER TO CUSTOMER": 5,
+      "Retender": 5,
+      "CANCELED": 3,
+      "ON HOLD": 3,
+      "LOA RECEIVED": 3,
+      "CANCELLED": 1,
+      "UNDER HOLD": 1,
+      "Cancelled": 1,
+      "CANCEL": 1,
+      "Supply-HO": 1,
+      "Handed over to customer": 1,
+      "Bill": 1,
+      "Quotation submitted": 1,
+      "Under Discussion": 1,
+      "lost": 1,
+      "LOA Received": 1,
+      "PO RECEIVED & Delivered": 1
+    },
+    "_states": {
+      "delivered": [
+        "PO Received & Delivered",
+        "PO RECEIVED & DELIVERED",
+        "Po Received & Delivered",
+        "PO received & Delivered",
+        "PO RECEIVED & Delivered"
+      ],
+      "order_in_progress": [
+        "Open",
+        "OPEN",
+        "PO Received",
+        "PO RECEIVED",
+        "Work in Progress",
+        "Work in progress",
+        "Order Confirmed",
+        "LOA",
+        "LOA RECEIVED",
+        "LOA Received",
+        "PENDING",
+        "Pending"
+      ],
+      "order_stopped": [
+        "Cancel",
+        "CANCEL",
+        "CANCELED",
+        "CANCELLED",
+        "Cancelled",
+        "On Hold",
+        "ON HOLD",
+        "UNDER HOLD"
+      ],
+      "quote_live": [
+        "Open",
+        "OPEN",
+        "Budgetary",
+        "BUDGETARY",
+        "Under Discussion",
+        "UNDER DISCUSSION",
+        "RFQ Submitted",
+        "Quotation submitted",
+        "Retender",
+        "RETENDER"
+      ],
+      "quote_dead": [
+        "Lost",
+        "LOST",
+        "lost",
+        "Closed",
+        "CLOSED",
+        "Not Received",
+        "NOT RECEIVED",
+        "PO Not Received"
+      ],
+      "unusable": [
+        "Supply-HO",
+        "Bill"
+      ]
+    }
+  },
+  "vertical_vocabulary": {
+    "by_line": {
+      "Domestic": {
+        "Grating": 174,
+        "Pressure Vessel": 376,
+        "Pultrusion": 138
+      },
+      "Export": {
+        "Grating": 11,
+        "Pressure Vessel": 67,
+        "Pultrusion": 28
+      },
+      "Export-Non-KAG": {
+        "Grating": 0,
+        "Pressure Vessel": 27,
+        "Pultrusion": 0
+      },
+      "Export-KAG": {
+        "Grating": 0,
+        "Pressure Vessel": 1,
+        "Pultrusion": 0
+      },
+      "External": {
+        "Grating": 1,
+        "Pressure Vessel": 103,
+        "Pultrusion": 0
+      },
+      "Internal": {
+        "Grating": 82,
+        "Pressure Vessel": 0,
+        "Pultrusion": 314
+      }
+    },
+    "fill_rate_won_rows_pct": 87.4
+  },
+  "payment_terms": {
+    "distinct_heavily_free_text": true,
+    "fill_rate_won_rows_pct": 3.4,
+    "values_seen": [
+      "45 Days Credit",
+      "100%Against Delivery",
+      "Current dated cheque against delivery",
+      "100% payment advance along with PO",
+      "Payment due immediately from date of invoice",
+      "100% prior to dispatch of materials",
+      "45 days credit – MSME / 90 days – non-MSME",
+      "100% basic payment + 100% taxes & duties within 45 days from date of delivery",
+      "30% advance with PO balance, 70% post material readiness",
+      "100% Payment Prior to Dispatch",
+      "100% Prior to Dispatch",
+      "100% against the receipt of materials",
+      "25% on order confirmation, 25% after fabrication of cylinders/heads against photographs, 45% before dispatch, 5% upon arrival (as agreed via email attachment).",
+      "100% through a TReDS platform, with 180 usance days from date of dispatch, with 10% PBG valid for 24 months",
+      "To be short closed."
+    ]
+  },
+  "dp_date": {
+    "non_blank_rows": 263,
+    "parsed_as_date": 238,
+    "parseable_share_of_non_blank_pct": 90.5,
+    "free_text_values": {
+      "AS EARLY AS POSSIBLE": 5,
+      "8–10 weeks from receipt of PO, drawing approval and manufacturing clearance": 3,
+      "As early as possible": 2,
+      "Immediate": 2,
+      "31-11-2024": 1,
+      "6 WEEKS DATE OF ISSUAL OF PO": 1,
+      "WEDNESDAY(25/03/2026)": 1,
+      "IMMEDIATE": 1,
+      "NA": 1,
+      "Delivery within 10–12 weeks from confirmation along with design & drawing acceptance": 1,
+      "AEAP": 1,
+      "With In4-6Weeks": 1,
+      "7-10 days from date of order": 1,
+      "4-6 WEEKS FROM THE DATE OF RECEIPT OF PO, DRG APPROVAL": 1,
+      "7-10 Days (Extra charges applicable)": 1,
+      "17.11.2026 (Within 60 days from the date of received of PO)": 1,
+      "Last weeks of August 2026": 1
+    }
+  },
+  "item_qty": {
+    "n": 94,
+    "p10": 2,
+    "p25": 3,
+    "p50": 18,
+    "p75": 51,
+    "p90": 220,
+    "p95": 461,
+    "p99": 846,
+    "max": 2650
+  },
+  "vessel_size_lead_factor": {
+    "factors": {
+      "1400": 0.67,
+      "1600": 0.8,
+      "1800": 0.96,
+      "2000": 1.0,
+      "2400": 1.33,
+      "2600": 2.05,
+      "3000": 1.51
+    }
+  }
+}
