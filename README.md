@@ -85,13 +85,13 @@ In full is **91.2%**, on time is **61.0%**. Quantity is mostly fine. Dates are n
 
 | Line | Top customer | Top 1 share | Top 5 share | Customers with revenue |
 |---|---|---:|---:|---:|
-| Pultrusion | C0013 | 89.3% | 100.0% | 4 |
-| Grating | C0020 | 80.7% | 96.7% | 19 |
-| Pressure Vessel | C0001 | 65.4% | 98.3% | 8 |
+| Pultrusion | C0013 | 80.9% | 100.0% | 4 |
+| Pressure Vessel | C0001 | 73.2% | 97.6% | 8 |
+| Grating | C0020 | 57.0% | 88.5% | 19 |
 
-On grating, the top-5 share is pushed up by a few very large orders landing on big accounts. With only 144 grating rows that does not average out, so the direction is right but the size is overstated. Pultrusion's 100% is simply four customers.
+Grating is the least concentrated line, but one account still makes up 57% of it. Pultrusion's 100% is simply four customers.
 
-**Old receivables.** ₹56.0 m is outstanding, and **78% of it is more than 90 days overdue** (54 invoices, 12 customers). That is roughly ₹44 m of working capital sitting with customers for over three months, and it is mostly the same few accounts that make up the revenue. Query 7 names them.
+**Old receivables.** ₹24.7 m is outstanding, and **70% of it is more than 90 days overdue** (54 invoices, 12 customers). That is roughly ₹17 m of working capital sitting with customers for over three months, and it is mostly the same few accounts that make up the revenue. Query 7 names them.
 
 **Bigger vessels take longer, but only in bands.**
 
@@ -144,7 +144,7 @@ Each query has a comment on top with the business question, the tables it uses a
 | `run_sql.py` | Runs any of the .sql files without the sqlite3 command line |
 | `data_privacy_check.py` | Checks every table and file for names, emails, phone numbers, GSTIN and PAN; fails on any finding |
 | `o2c.db` | The built database, ready to query |
-| `model_parameters.json` | The parameter file the generator reads (shares, lead times, value ranges) |
+| `model_parameters.json` | The parameter file the generator reads (shares, lead times, fill rates) |
 | `data/raw_quote_register.csv` | The raw table as CSV |
 | `data/query_results.txt` | Output of all 12 queries |
 | `data/validation_results.txt` | Output of the validation checks |
@@ -185,6 +185,7 @@ It prints one line per check and stops with an error if anything fails. EXPECTED
 - **Payment:** each customer has one payment habit and every invoice follows it, so query 7 shows habits and not noise. Two rules stop very old debt piling up just because of how the data is generated: invoices more than eight months past due are mostly moved to "paid late", and part payments more than six months past due are usually closed.
 - **Size:** 625 register rows (204 vessel, 277 pultrusion, 144 grating); window 1 Apr 2024 to 31 Aug 2026; about 4% cancelled.
 - **Money:** USD-INR 83-90; GST 18%, also on deemed exports, because under Indian GST the supplier charges it and the buyer claims it back.
+- **Prices:** grating and pultrusion use public list prices from IndiaMART (Nov 2026), with up to 12% either way on each order line. There is no public price list for 1.4-3.0 m vessels, so vessel prices are an assumption, scaled up from a public price for a smaller vessel.
 
 ## What this cannot tell you
 
