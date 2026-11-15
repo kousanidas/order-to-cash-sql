@@ -89,6 +89,56 @@ REGIONS = {"Domestic": [("India", "East"), ("India", "West"), ("India", "South")
                       ("Australia", "APAC"), ("United States", "Americas")]}
 
 
+# CHOSEN. Prices and quantities.
+# Each line is quantity x unit price. Unit prices are list prices from public
+# Indian listings (IndiaMART, Romegamart, Nov 2026), and each line gets +/-12% around the
+# list price for discounts and negotiation. Quantities follow the units the
+# products are sold in. Both use their own random generator, VRNG, so the
+# rest of the build (orders, dates, quotes, dispatches, payments) is not
+# disturbed by them.
+#   Grating, per sq m: moulded 38 mm ~2,420; moulded 25 mm 1,400-2,500;
+#     pultruded 1,250-3,000; grit top 2,300-3,260. Stair gratings 600-2,100
+#     per sq m, so a 0.3 sq m tread with nosing is taken as ~800 a piece.
+#   Pultrusion, per metre: handrail 500-1,600 (most 750-1,500); angle 80-500;
+#     50 mm channel 150-220; 50 mm square tube ~250. Ladder stringer per piece
+#     from FRP ladder listings (1,200-3,500 a piece).
+#   Vessels: no public price list covers 1.4-3.0 m industrial vessels. The one
+#     public price found is a 36 x 72 inch vessel at 35,000-45,000. Prices here
+#     scale that by diameter squared and add 2.5x for industrial pressure
+#     rating, nozzles and flanges. These are ASSUMPTIONS, not quotes.
+LIST_PRICE = {
+    "PV-1400": 235000, "PV-1600": 305000, "PV-1800": 390000, "PV-2000": 480000,
+    "PV-2400": 690000, "PV-2600": 810000, "PV-3000": 1080000,
+    "PU-01": 1100, "PU-02": 300, "PU-03": 200, "PU-04": 250, "PU-05": 1500,
+    "GR-01": 2400, "GR-02": 1700, "GR-03": 2500, "GR-04": 2500, "GR-05": 800,
+}
+VRNG = random.Random(2026)
+VESSEL_QTY = ([1, 2, 3, 4, 5, 6], [60, 25, 8, 4, 2, 1])   # vessel POs are mostly 1-2 pcs
+
+
+def line_qty(item):
+    """A realistic quantity for one line, in the item's own unit."""
+    if item.startswith("PV-"):
+        return VRNG.choices(*VESSEL_QTY, k=1)[0]
+    if item == "PU-05":                                  # ladder stringers, pieces
+        return int(min(80, max(4, round(VRNG.lognormvariate(2.48, 0.7)))))
+    if item == "GR-05":                                  # stair treads, pieces
+        return int(min(150, max(8, round(VRNG.lognormvariate(3.18, 0.7)))))
+    if item.startswith("PU-"):                           # metres, 6 m lengths
+        m = min(1800, max(30, VRNG.lognormvariate(5.19, 0.9)))
+        return int(round(m / 6) * 6)
+    sqm = min(1200, max(12, VRNG.lognormvariate(4.79, 0.9)))
+    if item in ("GR-01", "GR-02"):                       # 1 x 4 m panels
+        return int(round(sqm / 4) * 4)
+    return int(round(sqm))
+
+
+def line_price(item):
+    """List price with +/-12% for discount and negotiation."""
+    p = LIST_PRICE[item] * VRNG.uniform(0.88, 1.12)
+    return round(p, -2) if item.startswith("PV-") else round(p, 2)
+
+
 def pick(opts, wts):
     return random.choices(opts, weights=wts, k=1)[0]
 
@@ -131,11 +181,6 @@ def parse_text_date(s):
 ROWS, RAW_COLS, META = raw_register.build_register()
 MARKET = META["customer_markets"]
 
-with open(f"{HERE}/data/raw_quote_register.csv", "w", newline="") as fh:
-    w = csv.DictWriter(fh, fieldnames=RAW_COLS, extrasaction="ignore")
-    w.writeheader()
-    for r in ROWS:
-        w.writerow({c: r[c] for c in RAW_COLS})
 json.dump(META, open(f"{HERE}/data/generation_log.json", "w"), indent=2)
 
 
@@ -278,18 +323,17 @@ for r in ROWS:
     })
     quote_id_of_row[id(r)] = qid
 
-    line_total = r["_value"]
     n_lines = pick([1, 2, 3], [70, 22, 8])
     splits = [random.random() + 0.3 for _ in range(n_lines)]
     splits = [x / sum(splits) for x in splits]
     for ln_no, frac in enumerate(splits, 1):
         item = random.choice(ITEMS_BY_LINE[r["Item"]])
-        qty = max(1, int(round(draw(
-            [(p, FACTS["item_qty"][f"p{int(p*100)}"]) for p in (0.1, 0.25, 0.5, 0.75, 0.9)],
-            1, 2650) * frac)))
+        # the old quantity draw is kept only so the random stream stays in step
+        draw([(p, FACTS["item_qty"][f"p{int(p*100)}"]) for p in (0.1, 0.25, 0.5, 0.75, 0.9)],
+             1, 2650)
         quotation_lines.append({"quote_id": qid, "line_no": ln_no, "item_id": item,
-                                "qty": qty,
-                                "unit_price": round(line_total * frac / qty, 2)})
+                                "qty": line_qty(item),
+                                "unit_price": line_price(item)})
 
 
 # =============================================================================
@@ -306,6 +350,7 @@ STOPPED = set(FACTS["status_vocabulary"]["_states"]["order_stopped"])
 CANCELLED_WORDS = {"Cancel", "CANCEL", "CANCELED", "CANCELLED", "Cancelled"}
 
 orders, order_lines = [], []
+order_id_of_row = {}
 oid = 0
 for r in ROWS:
     if not (r.get("_job") or r["PO No"]):
@@ -366,7 +411,7 @@ for r in ROWS:
                              if cancelled else None,
     })
 
-    total = r["_value"]
+    order_id_of_row[id(r)] = oid
     n_lines = pick([1, 2, 3], [64, 26, 10])
     splits = [random.random() + 0.3 for _ in range(n_lines)]
     splits = [x / sum(splits) for x in splits]
@@ -375,12 +420,14 @@ for r in ROWS:
     # diameters also made query 4 count one order under several sizes.
     for ln_no, frac in enumerate(splits, 1):
         item = r["_fixed_item"] or random.choice(ITEMS_BY_LINE[line])
-        qty = max(1, int(round(draw(
+        # old quantity, kept so the dispatch step makes the same random draws
+        old_qty = max(1, int(round(draw(
             [(p, FACTS["item_qty"][f"p{int(p*100)}"]) for p in (0.1, 0.25, 0.5, 0.75, 0.9)],
             1, 2650) * frac)))
         order_lines.append({"order_id": oid, "line_no": ln_no, "item_id": item,
-                            "ordered_qty": qty,
-                            "unit_price": round(total * frac / qty, 2)})
+                            "ordered_qty": line_qty(item),
+                            "unit_price": line_price(item),
+                            "_old_qty": old_qty})
 
 ORDER_BY_ID = {o["order_id"]: o for o in orders}
 LINES_BY_ORDER = defaultdict(list)
@@ -435,11 +482,24 @@ for o in orders:
 
     in_full = random.random() < P_IN_FULL
     for ol in LINES_BY_ORDER[o["order_id"]]:
+        # The random draws run on the old quantity, so which lines ship short
+        # and which ship in two movements is exactly as before. The quantities
+        # shipped come from the new, realistic quantity.
+        old = old_before = ol["_old_qty"]
         qty = ol["ordered_qty"]
         if not in_full:
-            qty = max(1, int(round(qty * random.uniform(0.55, 0.95))))
-        if random.random() < SPLIT_DISPATCH_SHARE and qty >= 2:
-            first = max(1, int(qty * random.uniform(0.4, 0.7)))
+            u = random.uniform(0.55, 0.95)
+            old = max(1, int(round(old * u)))
+        if old < old_before:                 # this line ships short
+            if qty < 2:                      # one vessel cannot ship short
+                qty = ol["ordered_qty"] = 2
+            qty = min(qty - 1, max(1, int(round(qty * u))))
+        if random.random() < SPLIT_DISPATCH_SHARE and old >= 2:
+            u2 = random.uniform(0.4, 0.7)
+            if qty < 2:                      # two movements need at least 2
+                ol["ordered_qty"] += 2 - qty
+                qty = 2
+            first = max(1, int(qty * u2))
             parts = [(first, actual),
                      (qty - first, actual + dt.timedelta(days=split_gap))]
         else:
@@ -589,6 +649,45 @@ for inv in invoices:
                                      "payment_date": iso(final_date),
                                      "amount": round(remaining - part, 2),
                                      "payment_type": "Final"})
+
+
+# =============================================================================
+# 9b. The register's value and quantity cells
+#
+# A filled "PO / Quote Value" cell holds the PO value if the row became an
+# order, otherwise the quote value. A filled "Item Qty" cell holds the total
+# quantity. Blank cells stay blank. Rows that are neither get one line priced
+# the same way.
+# =============================================================================
+
+def totals(lines, qkey):
+    return (round(sum(l[qkey] * l["unit_price"] for l in lines), 2),
+            sum(l[qkey] for l in lines))
+
+QLINES = defaultdict(list)
+for ql in quotation_lines:
+    QLINES[ql["quote_id"]].append(ql)
+for r in ROWS:
+    oid_r, qid_r = order_id_of_row.get(id(r)), quote_id_of_row.get(id(r))
+    if oid_r:
+        val, q = totals(LINES_BY_ORDER[oid_r], "ordered_qty")
+    elif qid_r:
+        val, q = totals(QLINES[qid_r], "qty")
+    else:
+        item = VRNG.choice(ITEMS_BY_LINE[r["Item"]])
+        q = line_qty(item)
+        val = round(q * line_price(item), 2)
+    r["_value"] = val
+    if r["PO / Quote Value"] != "":
+        r["PO / Quote Value"] = val
+    if r["Item Qty"] != "":
+        r["Item Qty"] = q
+
+with open(f"{HERE}/data/raw_quote_register.csv", "w", newline="") as fh:
+    w = csv.DictWriter(fh, fieldnames=RAW_COLS, extrasaction="ignore")
+    w.writeheader()
+    for r in ROWS:
+        w.writerow({c: r[c] for c in RAW_COLS})
 
 
 # =============================================================================
